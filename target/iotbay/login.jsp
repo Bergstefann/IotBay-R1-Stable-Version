@@ -1,11 +1,9 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
-    <%
-        String errorMessage = request.getParameter("error");
-    %>
     <head>
-        <title>Log In</title>
+        <meta charset="UTF-8">
+        <title>Login - IoTBay</title>
         <link href="css.css" rel="stylesheet" type="text/css">
         <style>
             .form-container {
@@ -16,20 +14,24 @@
                 border-radius: 10px;
                 box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             }
+
             .form-container h2 {
                 text-align: center;
                 margin-bottom: 30px;
                 font-size: 24px;
             }
+
             .form-group {
                 margin-bottom: 20px;
                 text-align: left;
             }
+
             .form-group label {
                 display: block;
                 margin-bottom: 8px;
                 font-weight: bold;
             }
+
             .form-group input {
                 width: 100%;
                 padding: 10px;
@@ -37,6 +39,7 @@
                 border-radius: 5px;
                 font-size: 16px;
             }
+
             .btn-login {
                 width: 100%;
                 background-color: #d66b43;
@@ -48,21 +51,26 @@
                 cursor: pointer;
                 margin-top: 10px;
             }
+
             .btn-login:hover {
                 background-color: #c65c38;
             }
+
             .form-footer {
                 margin-top: 20px;
                 font-size: 14px;
                 text-align: center;
             }
+
             .form-footer a {
                 color: #0077cc;
                 text-decoration: none;
             }
+
             .form-footer a:hover {
                 text-decoration: underline;
             }
+
             .error-message {
                 color: red;
                 margin-bottom: 15px;
@@ -72,30 +80,44 @@
         </style>
     </head>
     <body>
-        <%@ include file="header.jsp" %> <!-- Site title and nav please do not remove -->
+        <%@ include file="header.jsp" %>
+
         <main>
             <section class="form-container">
                 <h2>Log In</h2>
-                <% if (errorMessage != null) { %>
-                    <div class="error-message"><%= errorMessage %></div>
-                <% } %>
+
+                <% 
+                    // Display error message if present
+                    String errorMsg = (String) session.getAttribute("errorMsg");
+                    if (errorMsg != null) {
+                %>
+                    <div class="error-message"><%= errorMsg %></div>
+                <% 
+                        // Clear the error message
+                        session.removeAttribute("errorMsg");
+                    } 
+                %>
+
                 <form action="LoginServlet" method="post">
                     <div class="form-group">
                         <label for="email">Email:</label>
                         <input type="text" id="email" name="email" required>
                     </div>
+
                     <div class="form-group">
                         <label for="password">Password:</label>
                         <input type="password" id="password" name="password" required>
                     </div>
+
                     <button type="submit" class="btn-login">Login</button>
                 </form>
+
                 <div class="form-footer">
-                    <p><a href="register.jsp">Don't have an account? Register here</a></p>
-                    <p><a href="forgotPassword.jsp">Forgot your password?</a></p>
+                    <p>Don't have an account? <a href="register.jsp">Register here</a></p>
                 </div>
             </section>
         </main>
-        <%@ include file="footer.jsp" %> <!-- Site footer please do not remove -->
+
+        <%@ include file="footer.jsp" %>
     </body>
 </html>

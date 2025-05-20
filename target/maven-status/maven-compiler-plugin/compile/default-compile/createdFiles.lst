@@ -1,6 +1,13 @@
 controller\LoginServlet.class
+controller\ProductServlet.class
+controller\ConnServlet.class
+model\dao\DB.class
+model\dao\DBConnector.class
+model\dao\UserDAO.class
 model\Product.class
 controller\LogoutServlet.class
 controller\RegisterServlet.class
+model\dao\ProductDAO.class
 model\User.class
-model\UserDAO.class
+controller\Validator.class
+model\dao\BaseDAO.class

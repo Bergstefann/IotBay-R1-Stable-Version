@@ -1,47 +1,93 @@
 package controller;
 
-import model.User;
-import model.UserDAO;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.SQLException;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.io.IOException;
+import model.User;
+import model.dao.DBConnector;
+import model.dao.UserDAO;
 
+@WebServlet(name = "LoginServlet", urlPatterns = {"/LoginServlet"})
 public class LoginServlet extends HttpServlet {
     
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String email = request.getParameter("email");
-        String password = request.getParameter("password");
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
         
-        // Simple validation
-        if (email == null || email.isEmpty() || password == null || password.isEmpty()) {
-            response.sendRedirect("login.jsp?error=Email+and+password+are+required");
-            return;
-        }
+        HttpSession session = request.getSession();
         
-        // Authenticate user
-        UserDAO userDAO = UserDAO.getInstance();
-        User user = userDAO.authenticate(email, password);
-        
-        if (user != null) {
-            // Create session for user
-            HttpSession session = request.getSession();
-            session.setAttribute("user", user);
+        try {
+            // Get the UserDAO from session or servlet context
+            UserDAO userDAO = (UserDAO) session.getAttribute("manager");
             
-            // Redirect to main page
-            response.sendRedirect("main.jsp");
-        } else {
-            // Authentication failed
-            response.sendRedirect("login.jsp?error=Invalid+email+or+password");
+            if (userDAO == null) {
+                userDAO = (UserDAO) getServletContext().getAttribute("userManager");
+                
+                if (userDAO == null) {
+                    System.out.println("UserDAO not found in session or servlet context, creating new connection");
+                    DBConnector db = new DBConnector();
+                    Connection conn = db.openConnection();
+                    userDAO = new UserDAO(conn);
+                    
+                    // Set in both session and servlet context
+                    session.setAttribute("manager", userDAO);
+                    getServletContext().setAttribute("userManager", userDAO);
+                } else {
+                    System.out.println("UserDAO found in servlet context");
+                    session.setAttribute("manager", userDAO);
+                }
+            } else {
+                System.out.println("UserDAO found in session");
+            }
+            
+            // Get form parameters
+            String email = request.getParameter("email");
+            String password = request.getParameter("password");
+            
+            System.out.println("Attempting login for email: " + email);
+            
+            try {
+                // Validate credentials
+                User user = userDAO.findUser(email, password);
+                
+                if (user != null) {
+                    System.out.println("Login successful for: " + email);
+                    // Login successful
+                    session.setAttribute("user", user);
+                    response.sendRedirect("index.jsp");
+                } else {
+                    System.out.println("Login failed for: " + email);
+                    // Login failed - set error message in session
+                    session.setAttribute("errorMsg", "Invalid email or password. Please try again.");
+                    response.sendRedirect("login.jsp");
+                }
+            } catch (SQLException e) {
+                System.err.println("Database error during login: " + e.getMessage());
+                e.printStackTrace();
+                session.setAttribute("errorMsg", "Database error: " + e.getMessage());
+                response.sendRedirect("login.jsp");
+            }
+        } catch (Exception e) {
+            // Log the error
+            System.err.println("Database error: " + e.getMessage());
+            e.printStackTrace();
+            
+            // Display error to user
+            session.setAttribute("errorMsg", "System error: Database connection not available");
+            response.sendRedirect("login.jsp");
         }
     }
     
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // Redirect to login page
-        response.sendRedirect("login.jsp");
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        // For handling logout or displaying login page
+        request.getRequestDispatcher("login.jsp").forward(request, response);
     }
 }
