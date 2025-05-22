@@ -1,11 +1,16 @@
 controller\LoginServlet.class
 controller\ProductServlet.class
 controller\ConnServlet.class
+controller\DeleteShipmentServlet.class
+controller\ShipmentSearchServlet.class
 model\dao\DB.class
 model\dao\DBConnector.class
+model\dao\ShipmentDAO.class
+model\Shipment.class
 model\dao\UserDAO.class
 model\Product.class
 controller\LogoutServlet.class
+controller\ShipmentServlet.class
 controller\RegisterServlet.class
 model\dao\ProductDAO.class
 model\User.class

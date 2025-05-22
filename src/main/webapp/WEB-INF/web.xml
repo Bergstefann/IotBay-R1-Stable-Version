@@ -61,6 +61,26 @@ xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/
         <servlet-name>ProductServlet</servlet-name>
         <url-pattern>/ProductServlet</url-pattern>
     </servlet-mapping>
+
+    <!-- Shipment Servlet -->
+    <servlet>
+        <servlet-name>ShipmentServlet</servlet-name>
+        <servlet-class>controller.ShipmentServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ShipmentServlet</servlet-name>
+        <url-pattern>/ShipmentServlet</url-pattern>
+    </servlet-mapping>
+
+    <!-- Shipment Search Servlet -->
+    <servlet>
+        <servlet-name>ShipmentSearchServlet</servlet-name>
+        <servlet-class>controller.ShipmentSearchServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ShipmentSearchServlet</servlet-name>
+        <url-pattern>/ShipmentSearchServlet</url-pattern>
+    </servlet-mapping>
    
     <!-- Session Configuration -->
     <session-config>
