@@ -127,23 +127,19 @@
         <%@ include file="header.jsp" %>
         
         <%
-            // Check if user is logged in, redirect to login if not
             User user = (User) session.getAttribute("user");
             if (user == null) {
                 response.sendRedirect("login.jsp");
                 return;
             }
             
-            // Get shipment from request attribute
             Shipment shipment = (Shipment) request.getAttribute("shipment");
             
-            // Redirect to list if no shipment
             if (shipment == null) {
                 response.sendRedirect("ShipmentServlet");
                 return;
             }
-            
-            // Date formatter
+        
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
         %>
 

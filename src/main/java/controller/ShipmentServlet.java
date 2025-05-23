@@ -28,7 +28,6 @@ public class ShipmentServlet extends HttpServlet {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
         
-        // Check if user is logged in
         if (user == null) {
             session.setAttribute("errorMsg", "Please log in to access shipment management.");
             response.sendRedirect("login.jsp");
@@ -36,15 +35,13 @@ public class ShipmentServlet extends HttpServlet {
         }
         
         try {
-            // Initialize database connection
             DBConnector db = new DBConnector();
             Connection conn = db.openConnection();
             ShipmentDAO shipmentDAO = new ShipmentDAO(conn);
             
-            // Get the action parameter
             String action = request.getParameter("action");
             if (action == null) {
-                action = "list"; // Default action
+                action = "list";
             }
             
             switch (action) {
@@ -78,7 +75,6 @@ public class ShipmentServlet extends HttpServlet {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
         
-        // Check if user is logged in
         if (user == null) {
             session.setAttribute("errorMsg", "Please log in to access shipment management.");
             response.sendRedirect("login.jsp");
@@ -86,15 +82,13 @@ public class ShipmentServlet extends HttpServlet {
         }
         
         try {
-            // Initialize database connection
             DBConnector db = new DBConnector();
             Connection conn = db.openConnection();
             ShipmentDAO shipmentDAO = new ShipmentDAO(conn);
             
-            // Get the action parameter
             String action = request.getParameter("action");
             if (action == null) {
-                action = "list"; // Default action
+                action = "list";
             }
             
             switch (action) {
@@ -121,13 +115,9 @@ public class ShipmentServlet extends HttpServlet {
         }
     }
     
-    // Handler methods
-    
     private void listShipments(HttpServletRequest request, HttpServletResponse response, 
                               ShipmentDAO shipmentDAO, User user) 
                               throws ServletException, IOException, SQLException {
-        
-        System.out.println("Loading shipments for user ID: " + user.getId());
         
         List<Shipment> shipments = shipmentDAO.getShipmentsByCustomerId(user.getId());
         request.setAttribute("shipments", shipments);
@@ -156,7 +146,6 @@ public class ShipmentServlet extends HttpServlet {
                 return;
             }
             
-            // Check if the shipment belongs to the logged-in user
             if (shipment.getCustomerID() != user.getId() && !user.isAdmin() && !user.isStaff()) {
                 request.setAttribute("errorMessage", "You do not have permission to view this shipment.");
                 request.getRequestDispatcher("error.jsp").forward(request, response);
@@ -175,7 +164,6 @@ public class ShipmentServlet extends HttpServlet {
     private void showCreateForm(HttpServletRequest request, HttpServletResponse response, User user) 
                                throws ServletException, IOException {
         
-        // Set any default values or attributes needed for the form
         request.setAttribute("userId", user.getId());
         request.getRequestDispatcher("shipment-create.jsp").forward(request, response);
     }
@@ -184,7 +172,6 @@ public class ShipmentServlet extends HttpServlet {
                                ShipmentDAO shipmentDAO, User user) 
                                throws ServletException, IOException, SQLException {
         
-        // Get form parameters
         String orderIdStr = request.getParameter("orderId");
         String shipmentMethod = request.getParameter("shipmentMethod");
         String streetAddress = request.getParameter("streetAddress");
@@ -192,7 +179,6 @@ public class ShipmentServlet extends HttpServlet {
         String state = request.getParameter("state");
         String postcode = request.getParameter("postcode");
         
-        // Validate required fields
         if (orderIdStr == null || orderIdStr.isEmpty() || 
             shipmentMethod == null || shipmentMethod.isEmpty() ||
             streetAddress == null || streetAddress.isEmpty() ||
@@ -208,7 +194,6 @@ public class ShipmentServlet extends HttpServlet {
         try {
             int orderId = Integer.parseInt(orderIdStr);
             
-            // Create a new shipment object
             Shipment shipment = new Shipment();
             shipment.setOrderID(orderId);
             shipment.setCustomerID(user.getId());
@@ -220,10 +205,8 @@ public class ShipmentServlet extends HttpServlet {
             shipment.setStatus("Pending");
             shipment.setFinalized(false);
             
-            // Save to database
             int shipmentId = shipmentDAO.createShipment(shipment);
             
-            // Redirect to the shipment details page
             response.sendRedirect("ShipmentServlet?action=view&id=" + shipmentId);
             
         } catch (NumberFormatException e) {
@@ -254,14 +237,12 @@ public class ShipmentServlet extends HttpServlet {
                 return;
             }
             
-            // Check if the shipment belongs to the logged-in user
             if (shipment.getCustomerID() != user.getId() && !user.isAdmin() && !user.isStaff()) {
                 request.setAttribute("errorMessage", "You do not have permission to edit this shipment.");
                 request.getRequestDispatcher("error.jsp").forward(request, response);
                 return;
             }
             
-            // Check if the shipment is already finalized
             if (shipment.isFinalized()) {
                 request.setAttribute("errorMessage", "This shipment is already finalized and cannot be edited.");
                 request.getRequestDispatcher("error.jsp").forward(request, response);
@@ -281,7 +262,6 @@ public class ShipmentServlet extends HttpServlet {
                                ShipmentDAO shipmentDAO, User user) 
                                throws ServletException, IOException, SQLException {
         
-        // Get form parameters
         String shipmentIdStr = request.getParameter("shipmentId");
         String orderIdStr = request.getParameter("orderId");
         String shipmentMethod = request.getParameter("shipmentMethod");
@@ -290,7 +270,6 @@ public class ShipmentServlet extends HttpServlet {
         String state = request.getParameter("state");
         String postcode = request.getParameter("postcode");
         
-        // Validate required fields
         if (shipmentIdStr == null || shipmentIdStr.isEmpty() ||
             orderIdStr == null || orderIdStr.isEmpty() || 
             shipmentMethod == null || shipmentMethod.isEmpty() ||
@@ -308,7 +287,6 @@ public class ShipmentServlet extends HttpServlet {
             int shipmentId = Integer.parseInt(shipmentIdStr);
             int orderId = Integer.parseInt(orderIdStr);
             
-            // Get existing shipment
             Shipment shipment = shipmentDAO.getShipmentById(shipmentId);
             
             if (shipment == null) {
@@ -317,21 +295,18 @@ public class ShipmentServlet extends HttpServlet {
                 return;
             }
             
-            // Check if the shipment belongs to the logged-in user
             if (shipment.getCustomerID() != user.getId() && !user.isAdmin() && !user.isStaff()) {
                 request.setAttribute("errorMessage", "You do not have permission to edit this shipment.");
                 request.getRequestDispatcher("error.jsp").forward(request, response);
                 return;
             }
             
-            // Check if the shipment is already finalized
             if (shipment.isFinalized()) {
                 request.setAttribute("errorMessage", "This shipment is already finalized and cannot be edited.");
                 request.getRequestDispatcher("error.jsp").forward(request, response);
                 return;
             }
             
-            // Update shipment details
             shipment.setOrderID(orderId);
             shipment.setShipmentMethod(shipmentMethod);
             shipment.setStreetAddress(streetAddress);
@@ -339,7 +314,6 @@ public class ShipmentServlet extends HttpServlet {
             shipment.setState(state);
             shipment.setPostcode(postcode);
             
-            // Save to database
             boolean success = shipmentDAO.updateShipment(shipment);
             
             if (success) {
@@ -370,7 +344,6 @@ public class ShipmentServlet extends HttpServlet {
         try {
             int shipmentId = Integer.parseInt(shipmentIdStr);
             
-            // Get existing shipment
             Shipment shipment = shipmentDAO.getShipmentById(shipmentId);
             
             if (shipment == null) {
@@ -379,21 +352,18 @@ public class ShipmentServlet extends HttpServlet {
                 return;
             }
             
-            // Check if the shipment belongs to the logged-in user
             if (shipment.getCustomerID() != user.getId() && !user.isAdmin() && !user.isStaff()) {
                 request.setAttribute("errorMessage", "You do not have permission to delete this shipment.");
                 request.getRequestDispatcher("error.jsp").forward(request, response);
                 return;
             }
             
-            // Check if the shipment is already finalized
             if (shipment.isFinalized()) {
                 request.setAttribute("errorMessage", "This shipment is already finalized and cannot be deleted.");
                 request.getRequestDispatcher("error.jsp").forward(request, response);
                 return;
             }
             
-            // Delete the shipment
             boolean success = shipmentDAO.deleteShipment(shipmentId);
             
             if (success) {
@@ -425,7 +395,6 @@ public class ShipmentServlet extends HttpServlet {
         try {
             int shipmentId = Integer.parseInt(shipmentIdStr);
             
-            // Get existing shipment
             Shipment shipment = shipmentDAO.getShipmentById(shipmentId);
             
             if (shipment == null) {
@@ -434,26 +403,22 @@ public class ShipmentServlet extends HttpServlet {
                 return;
             }
             
-            // Check if the shipment belongs to the logged-in user
             if (shipment.getCustomerID() != user.getId() && !user.isAdmin() && !user.isStaff()) {
                 request.setAttribute("errorMessage", "You do not have permission to finalize this shipment.");
                 request.getRequestDispatcher("error.jsp").forward(request, response);
                 return;
             }
             
-            // Check if the shipment is already finalized
             if (shipment.isFinalized()) {
                 request.setAttribute("errorMessage", "This shipment is already finalized.");
                 request.getRequestDispatcher("error.jsp").forward(request, response);
                 return;
             }
             
-            // Generate a tracking number if none provided
             if (trackingNumber == null || trackingNumber.isEmpty()) {
                 trackingNumber = "TRK" + System.currentTimeMillis();
             }
             
-            // Finalize the shipment
             boolean success = shipmentDAO.finalizeShipment(shipmentId, trackingNumber);
             
             if (success) {
@@ -477,7 +442,6 @@ public class ShipmentServlet extends HttpServlet {
         String startDateStr = request.getParameter("startDate");
         String endDateStr = request.getParameter("endDate");
         
-        // Convert parameters to appropriate types
         Integer shipmentId = null;
         Date startDate = null;
         Date endDate = null;
@@ -516,10 +480,8 @@ public class ShipmentServlet extends HttpServlet {
             }
         }
         
-        // Perform search
         List<Shipment> shipments = shipmentDAO.searchShipments(user.getId(), startDate, endDate, shipmentId);
         
-        // Set attributes and forward to search results page
         request.setAttribute("shipments", shipments);
         request.setAttribute("shipmentId", shipmentIdStr);
         request.setAttribute("startDate", startDateStr);

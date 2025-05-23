@@ -18,10 +18,10 @@
     </header>
 
     <body>
-            <%@ include file="header.jsp" %><!-- Site title and nav please do not remove -->
+            <%@ include file="header.jsp" %>
 
         
-        <main><!-- Please put all content inside the main tags -->
+        <main>
             <section>
                 <%
                     // Where there is no user stored
@@ -45,6 +45,6 @@
         </main>
         
 
-            <%@ include file="footer.jsp" %><!-- Site footer please do not remove -->
+            <%@ include file="footer.jsp" %>
     </body>
 </html>

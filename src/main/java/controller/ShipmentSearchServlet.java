@@ -29,17 +29,14 @@ public class ShipmentSearchServlet extends HttpServlet {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
         
-        // Check if user is logged in
         if (user == null) {
             session.setAttribute("errorMsg", "Please log in to search shipments.");
             response.sendRedirect("login.jsp");
             return;
         }
         
-        // Debug: Print user ID
         System.out.println("Search requested by user ID: " + user.getId());
         
-        // Just show the search form if no search parameters
         if (request.getParameter("shipmentId") == null && 
             request.getParameter("startDate") == null && 
             request.getParameter("endDate") == null) {
@@ -48,28 +45,19 @@ public class ShipmentSearchServlet extends HttpServlet {
             return;
         }
         
-        // Debug: Parameters received
-        
-        // Process the search
         try {
-            // Initialize database connection
             DBConnector db = new DBConnector();
             Connection conn = db.openConnection();
             ShipmentDAO shipmentDAO = new ShipmentDAO(conn);
             
-            // Get search parameters
             String shipmentIdStr = request.getParameter("shipmentId");
             String startDateStr = request.getParameter("startDate");
             String endDateStr = request.getParameter("endDate");
-            
-            // Debug
-            
-            // Initialize search variables
+
             Integer shipmentId = null;
             java.sql.Date startDate = null;
             java.sql.Date endDate = null;
             
-            // Parse shipment ID
             if (shipmentIdStr != null && !shipmentIdStr.trim().isEmpty()) {
                 try {
                     shipmentId = Integer.parseInt(shipmentIdStr.trim());
@@ -78,7 +66,6 @@ public class ShipmentSearchServlet extends HttpServlet {
                 }
             }
             
-            // Parse dates with multiple formats
             if (startDateStr != null && !startDateStr.trim().isEmpty()) {
                 startDate = parseDateWithMultipleFormats(startDateStr);
                 if (startDate == null) {
@@ -95,11 +82,9 @@ public class ShipmentSearchServlet extends HttpServlet {
                 }
             }
             
-            // Perform search
             List<Shipment> shipments;
             
             if (shipmentId != null) {
-                // If searching by ID, first try direct lookup
                 Shipment shipment = shipmentDAO.getShipmentById(shipmentId);
                 shipments = new ArrayList<>();
                 
@@ -107,12 +92,10 @@ public class ShipmentSearchServlet extends HttpServlet {
                     shipments.add(shipment);
                 }
             } else {
-                // Otherwise use full search
                 shipments = shipmentDAO.searchShipments(user.getId(), startDate, endDate, null);
                 System.out.println("Found " + shipments.size() + " shipments with specified criteria");
             }
             
-            // Set attributes and forward to search results page
             request.setAttribute("shipments", shipments);
             request.setAttribute("shipmentId", shipmentIdStr);
             request.setAttribute("startDate", startDateStr);
@@ -126,11 +109,7 @@ public class ShipmentSearchServlet extends HttpServlet {
         }
     }
 
-    /**
-     * Attempts to parse a date string using multiple formats
-     */
     private java.sql.Date parseDateWithMultipleFormats(String dateStr) {
-        // Try different date formats
         String[] dateFormats = {
             "yyyy-MM-dd", "dd/MM/yyyy", "MM/dd/yyyy", "dd-MM-yyyy", "yyyy/MM/dd"
         };
@@ -142,11 +121,10 @@ public class ShipmentSearchServlet extends HttpServlet {
                 java.util.Date parsedDate = dateFormat.parse(dateStr.trim());
                 return new java.sql.Date(parsedDate.getTime());
             } catch (ParseException e) {
-                // Try next format
             }
         }
         
-        return null; // Could not parse with any format
+        return null;
     }
     
     @Override

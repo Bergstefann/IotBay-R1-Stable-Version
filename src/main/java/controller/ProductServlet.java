@@ -14,32 +14,22 @@ import javax.servlet.http.HttpSession;
 import model.Product;
 import model.dao.ProductDAO;
 
-/**
- * Servlet to handle product-related requests
- */
 public class ProductServlet extends HttpServlet {
 
     private static final Logger LOGGER = Logger.getLogger(ProductServlet.class.getName());
 
-    /**
-     * Handles GET requests for products
-     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
 
-        // Get the current session
         HttpSession session = request.getSession();
         
-        // Get the action parameter
         String action = request.getParameter("action");
         
-        // Default to list action if no action specified
         if (action == null) {
             action = "list";
         }
         
-        // Get the product manager from session
         ProductDAO productManager = (ProductDAO) session.getAttribute("productManager");
         
         if (productManager == null) {
@@ -52,14 +42,12 @@ public class ProductServlet extends HttpServlet {
         try {
             switch (action) {
                 case "list":
-                    // Get all products
                     List<Product> products = productManager.getAllProducts();
                     request.setAttribute("products", products);
                     request.getRequestDispatcher("products.jsp").forward(request, response);
                     break;
                     
                 case "view":
-                    // Get product ID
                     String productIdStr = request.getParameter("id");
                     if (productIdStr == null || productIdStr.isEmpty()) {
                         response.sendRedirect("ProductServlet?action=list");
@@ -86,7 +74,6 @@ public class ProductServlet extends HttpServlet {
                     break;
                     
                 case "search":
-                    // Get search query
                     String query = request.getParameter("query");
                     if (query == null || query.isEmpty()) {
                         response.sendRedirect("ProductServlet?action=list");

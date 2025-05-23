@@ -77,23 +77,19 @@
         <%@ include file="header.jsp" %>
         
         <%
-            // Check if user is logged in, redirect to login if not
             User user = (User) session.getAttribute("user");
             if (user == null) {
                 response.sendRedirect("login.jsp");
                 return;
             }
             
-            // Get shipment from request attribute
             Shipment shipment = (Shipment) request.getAttribute("shipment");
             
-            // Redirect to list if no shipment
             if (shipment == null) {
                 response.sendRedirect("ShipmentServlet");
                 return;
             }
             
-            // Get any error message
             String errorMessage = (String) request.getAttribute("errorMessage");
         %>
 
@@ -195,7 +191,6 @@
         <%@ include file="footer.jsp" %>
         
         <script>
-            // Client-side validation for reference only - server-side validation is primary
             document.querySelector('form').addEventListener('submit', function(e) {
                 const postcode = document.getElementById('postcode').value;
                 if (!/^\d{4}$/.test(postcode)) {

@@ -126,21 +126,17 @@
         <%@ include file="header.jsp" %>
         
         <%
-            // Check if user is logged in, redirect to login if not
             User user = (User) session.getAttribute("user");
             if (user == null) {
                 response.sendRedirect("login.jsp");
                 return;
             }
             
-            // Get shipments from request attribute
             List<Shipment> shipments = (List<Shipment>) request.getAttribute("shipments");
             
-            // Get any messages
             String message = (String) request.getAttribute("message");
             String errorMessage = (String) request.getAttribute("errorMessage");
             
-            // Date formatter
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
         %>
 
@@ -210,7 +206,6 @@
                                             
                                             <% if (!shipment.isFinalized()) { %>
                                                 <a href="ShipmentServlet?action=showEdit&id=<%= shipment.getShipmentID() %>" class="btn btn-sm">Edit</a>
-                                                <!-- For each shipment where delete should be available -->
                                                 <a href="DeleteShipmentServlet?id=<%=shipment.getShipmentID()%>" class="btn btn-sm" style="color: #F96E46;">
                                                     Delete
                                                 </a>

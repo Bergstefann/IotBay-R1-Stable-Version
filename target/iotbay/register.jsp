@@ -105,13 +105,11 @@
             <section class="register-form-container">
                 <h2>Register</h2>
                 <%
-                    // Display error message if present
                     String errorMsg = (String) session.getAttribute("errorMsg");
                     if (errorMsg != null) {
                 %>
                     <div class="error-message"><%= errorMsg %></div>
                 <%
-                        // Clear the error message
                         session.removeAttribute("errorMsg");
                     }
                 %>

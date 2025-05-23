@@ -130,26 +130,14 @@ public class User implements Serializable {
         this.role = role;
     }
     
-    /**
-     * Checks if the user has an admin role.
-     * @return true if the user is an admin, false otherwise
-     */
     public boolean isAdmin() {
         return "admin".equalsIgnoreCase(role);
     }
     
-    /**
-     * Checks if the user has a staff role.
-     * @return true if the user is a staff member, false otherwise
-     */
     public boolean isStaff() {
         return "staff".equalsIgnoreCase(role);
     }
     
-    /**
-     * Checks if the user has a customer role.
-     * @return true if the user is a customer, false otherwise
-     */
     public boolean isCustomer() {
         return "customer".equalsIgnoreCase(role);
     }

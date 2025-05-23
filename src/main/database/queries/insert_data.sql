@@ -1,4 +1,3 @@
--- Insert test users
 INSERT INTO User (firstName, lastName, email, password, phoneNumber, role) VALUES ("James", "Qu", "test@t.com", "123456", "", "Customer");
 INSERT INTO User (firstName, lastName, email, password, phoneNumber, role) VALUES ("John", "Smith", "jsmith@gmail.com", "JOHN234352", "12345678", "Customer");
 INSERT INTO User (firstName, lastName, email, password, phoneNumber, role) VALUES ("Jess", "D", "test@gmail.com", "JxDx", "12345678", "Customer");

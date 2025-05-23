@@ -14,10 +14,8 @@ public class ShipmentDAO extends BaseDAO {
     public ShipmentDAO(Connection conn) throws SQLException {
         super(conn);
         
-        // Create Shipment table if it doesn't exist
         createShipmentTable();
         
-        // Insert sample data if needed
         if (getShipmentCount() == 0) {
             insertSampleData();
         }
@@ -65,7 +63,6 @@ public class ShipmentDAO extends BaseDAO {
     
     private void insertSampleData() {
         try {
-            // Get user IDs for sample data
             List<Integer> userIDs = new ArrayList<>();
             ResultSet rs = st.executeQuery("SELECT userID FROM User WHERE role = 'Customer' LIMIT 5");
             while (rs.next()) {
@@ -73,12 +70,10 @@ public class ShipmentDAO extends BaseDAO {
             }
             
             if (userIDs.isEmpty()) {
-                // If no customers exist, create a sample order
                 st.executeUpdate("INSERT INTO \"Order\" (customerID, orderStatus) VALUES (1, 'Pending')");
-                userIDs.add(1); // Use the first user
+                userIDs.add(1);
             }
             
-            // Get order IDs for sample data
             List<Integer> orderIDs = new ArrayList<>();
             rs = st.executeQuery("SELECT orderID FROM \"Order\" LIMIT 5");
             while (rs.next()) {
@@ -86,7 +81,6 @@ public class ShipmentDAO extends BaseDAO {
             }
             
             if (orderIDs.isEmpty()) {
-                // If no orders exist, create a sample order
                 st.executeUpdate("INSERT INTO \"Order\" (customerID, orderStatus) VALUES (1, 'Pending')");
                 rs = st.executeQuery("SELECT last_insert_rowid() as orderID");
                 if (rs.next()) {
@@ -94,17 +88,15 @@ public class ShipmentDAO extends BaseDAO {
                 }
             }
             
-            // Insert sample shipments
             String[] shipmentMethods = {"Standard", "Express", "Priority", "Overnight", "Economy"};
             String[] statuses = {"Pending", "Processing", "Shipped", "Delivered", "Cancelled"};
             
-            // Generate sample data
             for (int i = 0; i < 20; i++) {
                 int userIndex = i % userIDs.size();
                 int orderIndex = i % orderIDs.size();
                 int methodIndex = i % shipmentMethods.length;
                 int statusIndex = i % statuses.length;
-                boolean finalized = statusIndex > 1; // Finalized if shipped, delivered, or cancelled
+                boolean finalized = statusIndex > 1;
                 
                 String insertSQL = "INSERT INTO Shipment (orderID, customerID, shipmentMethod, streetAddress, " +
                                   "city, state, postcode, status, trackingNumber, finalized) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -131,7 +123,6 @@ public class ShipmentDAO extends BaseDAO {
         }
     }
     
-    // Extract shipment from ResultSet
     private Shipment extractShipmentFromResultSet(ResultSet rs) throws SQLException {
         Shipment shipment = new Shipment();
         shipment.setShipmentID(rs.getInt("shipmentID"));
@@ -151,9 +142,6 @@ public class ShipmentDAO extends BaseDAO {
         return shipment;
     }
     
-    // CRUD Operations
-    
-    // Create a new shipment
     public int createShipment(Shipment shipment) throws SQLException {
         String query = "INSERT INTO Shipment (orderID, customerID, shipmentMethod, shipmentDate, " +
                       "streetAddress, city, state, postcode, status, trackingNumber, finalized) " +
@@ -190,7 +178,6 @@ public class ShipmentDAO extends BaseDAO {
         }
     }
     
-    // Retrieve a shipment by ID
     public Shipment getShipmentById(int shipmentId) throws SQLException {
         String query = "SELECT * FROM Shipment WHERE shipmentID = ?";
         
@@ -207,13 +194,6 @@ public class ShipmentDAO extends BaseDAO {
         return null;
     }
 
-    /**
-     * Get all shipments for a customer
-     * 
-     * @param customerId The customer ID
-     * @return List of shipments for the customer
-     * @throws SQLException If a database error occurs
-     */
     public List<Shipment> getShipmentsByCustomerId(int customerId) throws SQLException {
         
         String query = "SELECT * FROM Shipment WHERE customerID = ? ORDER BY updatedDate DESC";
@@ -229,11 +209,9 @@ public class ShipmentDAO extends BaseDAO {
             }
         }
         
-        System.out.println("Found " + shipments.size() + " shipments for customer ID: " + customerId);
         return shipments;
     }
     
-    // Get all shipments for an order
     public List<Shipment> getShipmentsByOrderId(int orderId) throws SQLException {
         String query = "SELECT * FROM Shipment WHERE orderID = ? ORDER BY updatedDate DESC";
         List<Shipment> shipments = new ArrayList<>();
@@ -253,50 +231,36 @@ public class ShipmentDAO extends BaseDAO {
     
     public List<Shipment> searchShipments(Integer customerId, Date startDate, Date endDate, Integer shipmentId) throws SQLException {
         
-        // First, try to use a simpler approach - get all shipments and filter in Java
         List<Shipment> allShipments = getShipmentsByCustomerId(customerId);
         List<Shipment> filteredShipments = new ArrayList<>();
         
-        // Print all shipments for debugging
-        for (Shipment s : allShipments) {
-                            ", Created: " + s.getCreatedDate() + 
-                            ", Status: " + s.getStatus());
-        }
-        
-        // Filter in Java code instead of SQL
         for (Shipment shipment : allShipments) {
             boolean include = true;
             
-            // Filter by shipment ID if provided
             if (shipmentId != null && shipment.getShipmentID() != shipmentId) {
                 include = false;
             }
             
-            // Filter by start date if provided
             if (include && startDate != null && shipment.getCreatedDate() != null) {
                 if (shipment.getCreatedDate().before(startDate)) {
                     include = false;
                 }
             }
             
-            // Filter by end date if provided
             if (include && endDate != null && shipment.getCreatedDate() != null) {
                 if (shipment.getCreatedDate().after(endDate)) {
                     include = false;
                 }
             }
             
-            // Add to filtered results if it passed all filters
             if (include) {
                 filteredShipments.add(shipment);
             }
         }
         
-        System.out.println("Search returned " + filteredShipments.size() + " results after filtering");
         return filteredShipments;
     }
     
-    // Update an existing shipment
     public boolean updateShipment(Shipment shipment) throws SQLException {
         String query = "UPDATE Shipment SET orderID = ?, customerID = ?, shipmentMethod = ?, " +
                       "shipmentDate = ?, streetAddress = ?, city = ?, state = ?, postcode = ?, " +
@@ -322,7 +286,6 @@ public class ShipmentDAO extends BaseDAO {
         }
     }
     
-    // Finalize a shipment
     public boolean finalizeShipment(int shipmentId, String trackingNumber) throws SQLException {
         String query = "UPDATE Shipment SET status = 'Processing', trackingNumber = ?, " +
                       "finalized = 1, updatedDate = CURRENT_TIMESTAMP " +
@@ -339,14 +302,12 @@ public class ShipmentDAO extends BaseDAO {
     
     public boolean deleteShipment(int shipmentId) throws SQLException {
         
-        // Simplest possible delete query
         String query = "DELETE FROM Shipment WHERE shipmentID = ?";
         
         try (PreparedStatement pstmt = conn.prepareStatement(query)) {
             pstmt.setInt(1, shipmentId);
             
             int rowsAffected = pstmt.executeUpdate();
-            System.out.println("Delete operation affected " + rowsAffected + " rows");
             return rowsAffected > 0;
         }
     }

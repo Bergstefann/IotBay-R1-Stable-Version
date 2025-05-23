@@ -101,16 +101,13 @@
             </div>
             
             <%
-                // Get products from request attribute (set by ProductServlet)
                 List<Product> products = (List<Product>) request.getAttribute("products");
                 
-                // If products is null, redirect to the servlet to get products
                 if (products == null) {
                     response.sendRedirect("ProductServlet?action=list");
                     return;
                 }
                 
-                // Display message if no products found
                 if (products.isEmpty()) {
             %>
                 <div class="no-products">
@@ -143,20 +140,14 @@
         <%@ include file="footer.jsp" %>
         
         <script>
-            // JavaScript for category filter buttons
             document.addEventListener('DOMContentLoaded', function() {
                 const filterButtons = document.querySelectorAll('.category-filter button');
                 
                 filterButtons.forEach(button => {
                     button.addEventListener('click', function() {
-                        // Remove active class from all buttons
                         filterButtons.forEach(btn => btn.classList.remove('active'));
                         
-                        // Add active class to clicked button
                         this.classList.add('active');
-                        
-                        // In a real application, this would filter products
-                        // For this demo, we're just changing the visual state
                     });
                 });
             });

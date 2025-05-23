@@ -23,7 +23,6 @@ public class LoginServlet extends HttpServlet {
         HttpSession session = request.getSession();
         
         try {
-            // Get the UserDAO from session or servlet context
             UserDAO userDAO = (UserDAO) session.getAttribute("manager");
             
             if (userDAO == null) {
@@ -35,7 +34,6 @@ public class LoginServlet extends HttpServlet {
                     Connection conn = db.openConnection();
                     userDAO = new UserDAO(conn);
                     
-                    // Set in both session and servlet context
                     session.setAttribute("manager", userDAO);
                     getServletContext().setAttribute("userManager", userDAO);
                 } else {
@@ -46,24 +44,20 @@ public class LoginServlet extends HttpServlet {
                 System.out.println("UserDAO found in session");
             }
             
-            // Get form parameters
             String email = request.getParameter("email");
             String password = request.getParameter("password");
             
             System.out.println("Attempting login for email: " + email);
             
             try {
-                // Validate credentials
                 User user = userDAO.findUser(email, password);
                 
                 if (user != null) {
                     System.out.println("Login successful for: " + email);
-                    // Login successful
                     session.setAttribute("user", user);
                     response.sendRedirect("index.jsp");
                 } else {
                     System.out.println("Login failed for: " + email);
-                    // Login failed - set error message in session
                     session.setAttribute("errorMsg", "Invalid email or password. Please try again.");
                     response.sendRedirect("login.jsp");
                 }
@@ -74,11 +68,9 @@ public class LoginServlet extends HttpServlet {
                 response.sendRedirect("login.jsp");
             }
         } catch (Exception e) {
-            // Log the error
             System.err.println("Database error: " + e.getMessage());
             e.printStackTrace();
             
-            // Display error to user
             session.setAttribute("errorMsg", "System error: Database connection not available");
             response.sendRedirect("login.jsp");
         }
@@ -87,7 +79,6 @@ public class LoginServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // For handling logout or displaying login page
         request.getRequestDispatcher("login.jsp").forward(request, response);
     }
 }

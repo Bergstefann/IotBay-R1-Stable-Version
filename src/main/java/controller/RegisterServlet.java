@@ -24,7 +24,6 @@ public class RegisterServlet extends HttpServlet {
         HttpSession session = request.getSession();
         
         try {
-            // Get the UserDAO from session or servlet context
             UserDAO userDAO = (UserDAO) session.getAttribute("manager");
             
             if (userDAO == null) {
@@ -36,7 +35,6 @@ public class RegisterServlet extends HttpServlet {
                     Connection conn = db.openConnection();
                     userDAO = new UserDAO(conn);
                     
-                    // Set in both session and servlet context
                     session.setAttribute("manager", userDAO);
                     getServletContext().setAttribute("userManager", userDAO);
                 } else {
@@ -47,7 +45,6 @@ public class RegisterServlet extends HttpServlet {
                 System.out.println("UserDAO found in session");
             }
             
-            // Get form parameters
             String firstName = request.getParameter("firstName");
             String lastName = request.getParameter("lastName");
             String email = request.getParameter("email");
@@ -56,7 +53,6 @@ public class RegisterServlet extends HttpServlet {
             String phoneNumber = request.getParameter("phoneNumber");
             String tosAgreed = request.getParameter("TOS");
             
-            // Debugging output
             System.out.println("Registration attempt with:");
             System.out.println("First Name: " + firstName);
             System.out.println("Last Name: " + lastName);
@@ -64,7 +60,6 @@ public class RegisterServlet extends HttpServlet {
             System.out.println("Phone Number: " + phoneNumber);
             System.out.println("TOS agreed: " + tosAgreed);
             
-            // Basic validation
             if (firstName == null || lastName == null || email == null || password == null) {
                 session.setAttribute("errorMsg", "All fields are required");
                 response.sendRedirect("register.jsp");
@@ -84,7 +79,6 @@ public class RegisterServlet extends HttpServlet {
             }
             
             try {
-                // Try direct SQL insertion
                 try {
                     Connection conn = userDAO.getConnection();
                     String sql = "INSERT INTO User (firstName, lastName, email, password, phoneNumber, role) VALUES (?, ?, ?, ?, ?, ?)";
@@ -115,7 +109,6 @@ public class RegisterServlet extends HttpServlet {
                 } catch (SQLException e) {
                     System.err.println("Error with direct SQL: " + e.getMessage());
                     
-                    // Try with User object as fallback
                     User user = new User();
                     user.setFirstName(firstName);
                     user.setLastName(lastName);
@@ -145,11 +138,9 @@ public class RegisterServlet extends HttpServlet {
                 response.sendRedirect("register.jsp");
             }
         } catch (Exception e) {
-            // Log the error
             System.err.println("Database error: " + e.getMessage());
             e.printStackTrace();
             
-            // Display error to user
             session.setAttribute("errorMsg", "System error: Database connection not available");
             response.sendRedirect("register.jsp");
         }
@@ -158,7 +149,6 @@ public class RegisterServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // For displaying registration page
         request.getRequestDispatcher("register.jsp").forward(request, response);
     }
 }

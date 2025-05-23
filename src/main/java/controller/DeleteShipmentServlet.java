@@ -24,7 +24,6 @@ public class DeleteShipmentServlet extends HttpServlet {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
         
-        // Check if user is logged in
         if (user == null) {
             session.setAttribute("errorMsg", "Please log in to delete shipments.");
             response.sendRedirect("login.jsp");
@@ -42,12 +41,10 @@ public class DeleteShipmentServlet extends HttpServlet {
         try {
             int shipmentId = Integer.parseInt(shipmentIdStr);
             
-            // Initialize database connection
             DBConnector db = new DBConnector();
             Connection conn = db.openConnection();
             ShipmentDAO shipmentDAO = new ShipmentDAO(conn);
             
-            // Get the shipment first
             Shipment shipment = shipmentDAO.getShipmentById(shipmentId);
             
             if (shipment == null) {
@@ -55,19 +52,16 @@ public class DeleteShipmentServlet extends HttpServlet {
                 return;
             }
             
-            // Check if it belongs to the current user
             if (shipment.getCustomerID() != user.getId()) {
                 response.sendRedirect("ShipmentServlet?error=Not authorized to delete this shipment");
                 return;
             }
             
-            // Check if it's finalized
             if (shipment.isFinalized()) {
                 response.sendRedirect("ShipmentServlet?error=Cannot delete finalized shipment");
                 return;
             }
             
-            // Try to delete
             boolean success = shipmentDAO.deleteShipment(shipmentId);
             
             if (success) {

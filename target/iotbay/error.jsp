@@ -58,8 +58,7 @@
                 <div class="error-icon">⚠️</div>
                 <h1 class="error-title">Oops! Something went wrong.</h1>
                 
-                <% 
-                    // Get error message from request
+                <%
                     String errorMessage = (String) request.getAttribute("errorMessage");
                     if (errorMessage == null) {
                         errorMessage = "An unexpected error occurred.";

@@ -19,11 +19,9 @@ public class Shipment implements Serializable {
     private Date updatedDate;
     private boolean finalized;
     
-    // Default constructor
     public Shipment() {
     }
     
-    // Constructor with essential fields
     public Shipment(int orderID, int customerID, String shipmentMethod, 
                    String streetAddress, String city, String state, String postcode) {
         this.orderID = orderID;
@@ -37,7 +35,6 @@ public class Shipment implements Serializable {
         this.finalized = false;
     }
     
-    // Full constructor
     public Shipment(int shipmentID, int orderID, int customerID, String shipmentMethod, 
                    Date shipmentDate, String streetAddress, String city, String state, 
                    String postcode, String status, String trackingNumber, 
@@ -58,7 +55,6 @@ public class Shipment implements Serializable {
         this.finalized = finalized;
     }
     
-    // Getters and Setters
     public int getShipmentID() {
         return shipmentID;
     }
@@ -171,12 +167,10 @@ public class Shipment implements Serializable {
         this.finalized = finalized;
     }
     
-    // Helper methods
     public String getFullAddress() {
         return streetAddress + ", " + city + ", " + state + " " + postcode;
     }
     
-    // For display in lists/tables
     public String getShortDetails() {
         return "Shipment #" + shipmentID + " - " + status + 
                (trackingNumber != null ? " (Tracking: " + trackingNumber + ")" : "");

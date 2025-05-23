@@ -17,7 +17,6 @@ public class UserDAO {
         }
         this.conn = conn;
         
-        // Verify the User table exists
         try (Statement stmt = getValidConnection().createStatement()) {
             ResultSet tables = getValidConnection().getMetaData().getTables(null, null, "User", null);
             if (!tables.next()) {
@@ -29,9 +28,6 @@ public class UserDAO {
         }
     }
     
-    /**
-     * Gets a valid connection, reopening if necessary
-     */
     private Connection getValidConnection() {
         try {
             if (conn == null || conn.isClosed()) {
@@ -50,12 +46,11 @@ public class UserDAO {
             return conn;
         } catch (SQLException e) {
             System.err.println("Error validating connection in UserDAO: " + e.getMessage());
-            return conn; // Return what we have even if it might be problematic
+            return conn; 
         }
     }
     
     private void createUserTable() throws SQLException {
-        // This matches your SQL script definition
         String createUserTable = 
             "CREATE TABLE IF NOT EXISTS User (" +
             "userID INTEGER PRIMARY KEY AUTOINCREMENT," +
@@ -81,7 +76,6 @@ public class UserDAO {
     }
     
     public User findUser(String email, String password) throws SQLException {
-        // Query using the exact table name and column names from your schema
         String query = "SELECT * FROM User WHERE email = ? AND password = ?";
         System.out.println("Executing query: " + query + " for email: " + email);
         
@@ -92,7 +86,6 @@ public class UserDAO {
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     User user = new User();
-                    // Map database fields to User object
                     user.setId(rs.getInt("userID"));
                     user.setEmail(rs.getString("email"));
                     user.setPassword(rs.getString("password"));
@@ -100,7 +93,6 @@ public class UserDAO {
                     user.setLastName(rs.getString("lastName"));
                     user.setPhone(rs.getString("phoneNumber"));
                     
-                    // Add other fields if your User model has them
                     try {
                         user.setStreetAddress(rs.getString("streetAddress"));
                         user.setCountry(rs.getString("country"));
@@ -109,7 +101,6 @@ public class UserDAO {
                         user.setSuburb(rs.getString("suburb"));
                         user.setRole(rs.getString("role"));
                     } catch (Exception e) {
-                        // Ignore if these fields don't exist in your User class
                     }
                     
                     return user;

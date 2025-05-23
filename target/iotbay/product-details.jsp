@@ -168,10 +168,8 @@
 
         <main>
             <%
-                // Get product from request attribute (set by ProductServlet)
                 Product product = (Product) request.getAttribute("product");
                 
-                // If product is null, redirect to products page
                 if (product == null) {
                     response.sendRedirect("ProductServlet?action=list");
                     return;
@@ -236,7 +234,6 @@
         <%@ include file="footer.jsp" %>
         
         <script>
-            // JavaScript for quantity input
             document.addEventListener('DOMContentLoaded', function() {
                 const minusBtn = document.querySelector('.quantity-btn.minus');
                 const plusBtn = document.querySelector('.quantity-btn.plus');

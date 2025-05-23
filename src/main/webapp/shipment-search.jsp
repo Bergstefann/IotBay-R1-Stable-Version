@@ -122,23 +122,19 @@
         <%@ include file="header.jsp" %>
         
         <%
-            // Check if user is logged in, redirect to login if not
             User user = (User) session.getAttribute("user");
             if (user == null) {
                 response.sendRedirect("login.jsp");
                 return;
             }
             
-            // Get search parameters and results
             String shipmentIdStr = (String) request.getAttribute("shipmentId");
             String startDateStr = (String) request.getAttribute("startDate");
             String endDateStr = (String) request.getAttribute("endDate");
             List<Shipment> shipments = (List<Shipment>) request.getAttribute("shipments");
             
-            // Get any error message
             String errorMessage = (String) request.getAttribute("errorMessage");
             
-            // Format for displaying dates
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
             SimpleDateFormat inputDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         %>

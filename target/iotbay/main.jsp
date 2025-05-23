@@ -131,17 +131,14 @@
 </head>
 <body>
     <% 
-        // Retrieve the user from the session
         User user = (User)session.getAttribute("user");
         
-        // Redirect to login if no user is in session
         if (user == null) {
             response.sendRedirect("login.jsp");
             return;
         }
     %>
     
-    <!-- Include the header -->
     <jsp:include page="header.jsp" />
     
     <div class="container">
@@ -164,7 +161,6 @@
                 featuredProducts[2] = new Product(3, "Smart Thermostat", "product3.jpg", 
                     "Energy-saving smart thermostat", 79.99, 25, false);
                 
-                // Display the products
                 for(Product product : featuredProducts) {
             %>
             <div class="product-card">
@@ -201,7 +197,6 @@
         </section>
     </div>
     
-    <!-- Include the footer -->
     <jsp:include page="footer.jsp" />
 </body>
 </html>

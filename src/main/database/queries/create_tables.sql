@@ -1,7 +1,3 @@
--- Database schema for IoTBay
--- create_table.sql
-
--- Create User table
 CREATE TABLE User (
     userID INTEGER PRIMARY KEY,
     firstName VARCHAR(20),
@@ -19,7 +15,6 @@ CREATE TABLE User (
     role VARCHAR(20)
 );
 
--- Create Product table
 CREATE TABLE Product (
     productID INTEGER PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
@@ -30,7 +25,6 @@ CREATE TABLE Product (
     favourited BOOLEAN DEFAULT 0
 );
 
--- Create Cart table
 CREATE TABLE Cart (
     cartID INTEGER PRIMARY KEY,
     customerID INTEGER NOT NULL,
@@ -40,7 +34,6 @@ CREATE TABLE Cart (
     FOREIGN KEY (customerID) REFERENCES User(userID)
 );
 
--- Create CartItem table
 CREATE TABLE CartItem (
     cartItemID INTEGER PRIMARY KEY,
     cartID INTEGER NOT NULL,
@@ -52,7 +45,6 @@ CREATE TABLE CartItem (
     FOREIGN KEY (productID) REFERENCES Product(productID)
 );
 
--- Create Order table
 CREATE TABLE "Order" (
     orderID INTEGER PRIMARY KEY,
     customerID INTEGER NOT NULL,
@@ -63,7 +55,6 @@ CREATE TABLE "Order" (
     FOREIGN KEY (customerID) REFERENCES User(userID)
 );
 
--- Create OrderLine table
 CREATE TABLE OrderLine (
     orderID INTEGER NOT NULL,
     productID INTEGER NOT NULL,
@@ -76,7 +67,6 @@ CREATE TABLE OrderLine (
     FOREIGN KEY (productID) REFERENCES Product(productID)
 );
 
--- Create Payment table
 CREATE TABLE Payment (
     paymentID INTEGER PRIMARY KEY,
     orderID INTEGER NOT NULL,
@@ -95,7 +85,6 @@ CREATE TABLE Payment (
     FOREIGN KEY (customerID) REFERENCES User(userID)
 );
 
--- Create Invoice table
 CREATE TABLE Invoice (
     invoiceID INTEGER PRIMARY KEY,
     paymentID INTEGER NOT NULL,
@@ -111,7 +100,6 @@ CREATE TABLE Invoice (
     FOREIGN KEY (customerID) REFERENCES User(userID)
 );
 
--- Create Shipment table
 CREATE TABLE Shipment (
     shipmentID INTEGER PRIMARY KEY,
     status VARCHAR(20) DEFAULT 'Processing',

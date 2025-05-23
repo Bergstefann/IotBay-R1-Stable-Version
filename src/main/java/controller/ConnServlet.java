@@ -29,7 +29,6 @@ public class ConnServlet extends HttpServlet {
     public void init() {
         System.out.println("ConnServlet initializing...");
         
-        // Define database paths
         String dbScriptPath = "C:/Users/thoma/OneDrive/Documents/IotBay R1 Stable Version/src/main/database/iotbay.db";
         String newDbPath = "C:/Users/thoma/OneDrive/Documents/IotBay R1 Stable Version/src/main/database/iotbay_data.db";
         
@@ -37,13 +36,11 @@ public class ConnServlet extends HttpServlet {
         File newDbFile = new File(newDbPath);
         
         try {
-            // Check if the script file exists
             System.out.println("Checking SQL script file at: " + dbScriptFile.getAbsolutePath());
             
             if (dbScriptFile.exists()) {
                 System.out.println("SQL script file exists, size: " + dbScriptFile.length() + " bytes");
                 
-                // Read the SQL script content
                 StringBuilder scriptContent = new StringBuilder();
                 try (BufferedReader reader = new BufferedReader(new FileReader(dbScriptFile))) {
                     String line;
@@ -52,26 +49,21 @@ public class ConnServlet extends HttpServlet {
                     }
                 }
                 
-                // Delete existing database file if it exists
                 if (newDbFile.exists()) {
                     System.out.println("Existing database file found. Deleting it to create a fresh one.");
                     newDbFile.delete();
                 }
                 
-                // Create parent directories if needed
                 if (!newDbFile.getParentFile().exists()) {
                     newDbFile.getParentFile().mkdirs();
                 }
                 
-                // Create and initialize the new database
                 Class.forName("org.sqlite.JDBC");
                 try (Connection initConn = DriverManager.getConnection("jdbc:sqlite:" + newDbPath);
                      Statement stmt = initConn.createStatement()) {
                     
                     System.out.println("Creating new SQLite database: " + newDbPath);
                     
-                    // Execute the script content
-                    // Split by semicolons to execute each statement separately
                     String[] statements = scriptContent.toString().split(";");
                     for (String statement : statements) {
                         String trimmedStatement = statement.trim();
@@ -84,7 +76,6 @@ public class ConnServlet extends HttpServlet {
                             } catch (SQLException e) {
                                 System.err.println("Error executing statement: " + trimmedStatement);
                                 System.err.println("Error message: " + e.getMessage());
-                                // Continue with other statements
                             }
                         }
                     }
@@ -92,12 +83,10 @@ public class ConnServlet extends HttpServlet {
                     System.out.println("Database created and initialized successfully");
                 }
                 
-                // Update the system property to use the new database
                 System.setProperty("database.path", newDbPath);
                 
             } else {
                 System.out.println("SQL script file does not exist at: " + dbScriptFile.getAbsolutePath());
-                // Check if the database already exists
                 if (newDbFile.exists()) {
                     System.out.println("Using existing database file: " + newDbFile.getAbsolutePath());
                     System.setProperty("database.path", newDbPath);
@@ -106,17 +95,13 @@ public class ConnServlet extends HttpServlet {
                 }
             }
             
-            // Initialize DB connector with the new database
             db = new DBConnector();
             conn = db.openConnection();
             
-            // Initialize DAOs
             try {
                 userManager = new UserDAO(conn);
-                // Only uncomment this if you've created ProductDAO
                 productManager = new ProductDAO(conn);
                 
-                // Store DAOs in servlet context for application-wide access
                 getServletContext().setAttribute("userManager", userManager);
                 getServletContext().setAttribute("productManager", productManager);
                 
@@ -140,7 +125,6 @@ public class ConnServlet extends HttpServlet {
         HttpSession session = request.getSession();
         
         try {
-            // Check if db was initialized properly
             if (db == null) {
                 throw new ServletException("Database connection not initialized");
             }
@@ -150,7 +134,6 @@ public class ConnServlet extends HttpServlet {
                 throw new ServletException("Failed to open database connection");
             }
             
-            // Make sure DAOs are initialized and stored in session
             if (userManager == null) {
                 try {
                     userManager = new UserDAO(conn);
@@ -172,17 +155,14 @@ public class ConnServlet extends HttpServlet {
             session.setAttribute("manager", userManager);
             session.setAttribute("productManager", productManager);
             
-            // Respond with success indicator for debugging
             response.getWriter().println("Database connection successful");
             
         } catch (ServletException ex) {
             LOGGER.log(Level.SEVERE, "Database connection error", ex);
             
-            // Send an error message to the client
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             response.getWriter().println("Database connection error: " + ex.getMessage());
             
-            // Clear any incomplete objects from the session
             session.removeAttribute("manager");
             session.removeAttribute("productManager");
         }
