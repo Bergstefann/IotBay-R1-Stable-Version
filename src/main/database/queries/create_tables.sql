@@ -100,16 +100,26 @@ CREATE TABLE Invoice (
     FOREIGN KEY (customerID) REFERENCES User(userID)
 );
 
+-- Drop the existing table and recreate with proper foreign keys
+DROP TABLE IF EXISTS Shipment;
+
 CREATE TABLE Shipment (
-    shipmentID INTEGER PRIMARY KEY,
-    status VARCHAR(20) DEFAULT 'Processing',
-    trackingNumber VARCHAR(50),
+    shipmentID INTEGER PRIMARY KEY AUTOINCREMENT,
+    orderID INTEGER NOT NULL,
+    customerID INTEGER NOT NULL,
+    shipmentMethod VARCHAR(50),
+    shipmentDate DATE,
     streetAddress VARCHAR(100),
-    postcode VARCHAR(10),
     city VARCHAR(50),
     state VARCHAR(20),
+    postcode VARCHAR(10),
+    status VARCHAR(20) DEFAULT 'Pending',
+    trackingNumber VARCHAR(50),
+    finalized BOOLEAN DEFAULT 0,
     deliveryAllocation VARCHAR(100),
     deliveryDate DATE,
     createdDate DATE DEFAULT CURRENT_TIMESTAMP,
-    updatedDate DATE DEFAULT CURRENT_TIMESTAMP
+    updatedDate DATE DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (orderID) REFERENCES "Order"(orderID),
+    FOREIGN KEY (customerID) REFERENCES User(userID)
 );

@@ -2,7 +2,6 @@
 <%@page import="model.User"%>
 
 <% 
-    // Get user from session if it exists
     User headerUser = (User) session.getAttribute("user"); 
 %>
 

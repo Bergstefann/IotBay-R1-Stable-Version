@@ -132,7 +132,6 @@
 
         <%@ include file="footer.jsp" %>
         
-        <!-- Initialize database connection if not already done -->
         <jsp:include page="/ConnServlet" flush="true" />
     </body>
 </html>

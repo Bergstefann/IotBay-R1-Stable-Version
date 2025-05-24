@@ -18,9 +18,19 @@ import model.User;
 import model.dao.DBConnector;
 import model.dao.ShipmentDAO;
 
+/**
+ * Main servlet controller for shipment management
+ * Handles CRUD operations Create, Read, Update, Delete, and Finalize
+ * User security checks for all operations
+ */
 @WebServlet(name = "ShipmentServlet", urlPatterns = {"/ShipmentServlet"})
 public class ShipmentServlet extends HttpServlet {
     
+    /**
+     * Handles GET requests (viewing and displaying data)
+     * Button actions are based on the 'action' parameter
+     * Default action is 'list' if action is null or empty 
+     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -28,6 +38,7 @@ public class ShipmentServlet extends HttpServlet {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
         
+        // Security check - redirect unlogged in users
         if (user == null) {
             session.setAttribute("errorMsg", "Please log in to access shipment management.");
             response.sendRedirect("login.jsp");
@@ -35,10 +46,12 @@ public class ShipmentServlet extends HttpServlet {
         }
         
         try {
+            // Initialize database connection and DAO
             DBConnector db = new DBConnector();
             Connection conn = db.openConnection();
             ShipmentDAO shipmentDAO = new ShipmentDAO(conn);
             
+            // Route to appropriate action handler
             String action = request.getParameter("action");
             if (action == null) {
                 action = "list";
@@ -68,6 +81,10 @@ public class ShipmentServlet extends HttpServlet {
         }
     }
     
+    /**
+     * Handles POST requests for modifying data
+     * Button actions are based on the 'action' parameter
+     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -75,6 +92,7 @@ public class ShipmentServlet extends HttpServlet {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("user");
         
+        // Security check - redirect unlogged in users
         if (user == null) {
             session.setAttribute("errorMsg", "Please log in to access shipment management.");
             response.sendRedirect("login.jsp");
@@ -82,10 +100,12 @@ public class ShipmentServlet extends HttpServlet {
         }
         
         try {
+            // Initialize database connection and DAO
             DBConnector db = new DBConnector();
             Connection conn = db.openConnection();
             ShipmentDAO shipmentDAO = new ShipmentDAO(conn);
             
+            // Route to appropriate action handler
             String action = request.getParameter("action");
             if (action == null) {
                 action = "list";
@@ -115,6 +135,10 @@ public class ShipmentServlet extends HttpServlet {
         }
     }
     
+    /**
+     * Displays list of shipments for the current user
+     * Shows all shipments ordered by most recent update first
+     */
     private void listShipments(HttpServletRequest request, HttpServletResponse response, 
                               ShipmentDAO shipmentDAO, User user) 
                               throws ServletException, IOException, SQLException {
@@ -161,6 +185,9 @@ public class ShipmentServlet extends HttpServlet {
         }
     }
     
+    /**
+     * Displays the shipment creation form
+     */
     private void showCreateForm(HttpServletRequest request, HttpServletResponse response, User user) 
                                throws ServletException, IOException {
         
@@ -168,10 +195,15 @@ public class ShipmentServlet extends HttpServlet {
         request.getRequestDispatcher("shipment-create.jsp").forward(request, response);
     }
     
+    /**
+     * Validates all required fields and creates shipment with default status
+     * Redirects to view page after successful creation
+     */
     private void createShipment(HttpServletRequest request, HttpServletResponse response, 
                                ShipmentDAO shipmentDAO, User user) 
                                throws ServletException, IOException, SQLException {
         
+        // Extract form parameters
         String orderIdStr = request.getParameter("orderId");
         String shipmentMethod = request.getParameter("shipmentMethod");
         String streetAddress = request.getParameter("streetAddress");
@@ -179,6 +211,7 @@ public class ShipmentServlet extends HttpServlet {
         String state = request.getParameter("state");
         String postcode = request.getParameter("postcode");
         
+        // Validate required fields
         if (orderIdStr == null || orderIdStr.isEmpty() || 
             shipmentMethod == null || shipmentMethod.isEmpty() ||
             streetAddress == null || streetAddress.isEmpty() ||
@@ -194,6 +227,7 @@ public class ShipmentServlet extends HttpServlet {
         try {
             int orderId = Integer.parseInt(orderIdStr);
             
+            // Create new shipment object with form data
             Shipment shipment = new Shipment();
             shipment.setOrderID(orderId);
             shipment.setCustomerID(user.getId());
@@ -205,8 +239,8 @@ public class ShipmentServlet extends HttpServlet {
             shipment.setStatus("Pending");
             shipment.setFinalized(false);
             
+            // Save to database and redirect to view
             int shipmentId = shipmentDAO.createShipment(shipment);
-            
             response.sendRedirect("ShipmentServlet?action=view&id=" + shipmentId);
             
         } catch (NumberFormatException e) {
@@ -215,6 +249,10 @@ public class ShipmentServlet extends HttpServlet {
         }
     }
     
+    /**
+     * Displays shipment edit form with current data pre-populated
+     * Only non-finalized shipments can be edited
+     */
     private void showEditForm(HttpServletRequest request, HttpServletResponse response, 
                              ShipmentDAO shipmentDAO, User user) 
                              throws ServletException, IOException, SQLException {
@@ -243,6 +281,7 @@ public class ShipmentServlet extends HttpServlet {
                 return;
             }
             
+            // Business rule - finalized shipments cannot be edited
             if (shipment.isFinalized()) {
                 request.setAttribute("errorMessage", "This shipment is already finalized and cannot be edited.");
                 request.getRequestDispatcher("error.jsp").forward(request, response);
@@ -258,6 +297,10 @@ public class ShipmentServlet extends HttpServlet {
         }
     }
     
+    /**
+     * Processes shipment update from edit form submission
+     * Updates shipment data and redirects to view page
+     */
     private void updateShipment(HttpServletRequest request, HttpServletResponse response, 
                                ShipmentDAO shipmentDAO, User user) 
                                throws ServletException, IOException, SQLException {
@@ -314,6 +357,7 @@ public class ShipmentServlet extends HttpServlet {
             shipment.setState(state);
             shipment.setPostcode(postcode);
             
+            // Save changes and redirect
             boolean success = shipmentDAO.updateShipment(shipment);
             
             if (success) {
@@ -329,6 +373,10 @@ public class ShipmentServlet extends HttpServlet {
         }
     }
     
+    /**
+     * Handles shipment deletion requests
+     * Only non-finalized shipments can be deleted
+     */
     private void deleteShipment(HttpServletRequest request, HttpServletResponse response, 
                                ShipmentDAO shipmentDAO, User user) 
                                throws ServletException, IOException, SQLException {
@@ -344,6 +392,7 @@ public class ShipmentServlet extends HttpServlet {
         try {
             int shipmentId = Integer.parseInt(shipmentIdStr);
             
+            // Retrieve shipment for validation
             Shipment shipment = shipmentDAO.getShipmentById(shipmentId);
             
             if (shipment == null) {
@@ -352,18 +401,21 @@ public class ShipmentServlet extends HttpServlet {
                 return;
             }
             
+            // Security check - user validation
             if (shipment.getCustomerID() != user.getId() && !user.isAdmin() && !user.isStaff()) {
                 request.setAttribute("errorMessage", "You do not have permission to delete this shipment.");
                 request.getRequestDispatcher("error.jsp").forward(request, response);
                 return;
             }
             
+            // Business rule - finalized shipments cannot be deleted
             if (shipment.isFinalized()) {
                 request.setAttribute("errorMessage", "This shipment is already finalized and cannot be deleted.");
                 request.getRequestDispatcher("error.jsp").forward(request, response);
                 return;
             }
             
+            // Delete and redirect
             boolean success = shipmentDAO.deleteShipment(shipmentId);
             
             if (success) {
@@ -379,6 +431,10 @@ public class ShipmentServlet extends HttpServlet {
         }
     }
     
+    /**
+     * Finalizes shipment with tracking number and prevents further changes
+     * Auto-generates tracking number if none provided
+     */
     private void finalizeShipment(HttpServletRequest request, HttpServletResponse response, 
                                  ShipmentDAO shipmentDAO, User user) 
                                  throws ServletException, IOException, SQLException {
@@ -395,6 +451,7 @@ public class ShipmentServlet extends HttpServlet {
         try {
             int shipmentId = Integer.parseInt(shipmentIdStr);
             
+            // Retrieve shipment for validation
             Shipment shipment = shipmentDAO.getShipmentById(shipmentId);
             
             if (shipment == null) {
@@ -403,22 +460,26 @@ public class ShipmentServlet extends HttpServlet {
                 return;
             }
             
+            // Security check - user validation
             if (shipment.getCustomerID() != user.getId() && !user.isAdmin() && !user.isStaff()) {
                 request.setAttribute("errorMessage", "You do not have permission to finalize this shipment.");
                 request.getRequestDispatcher("error.jsp").forward(request, response);
                 return;
             }
             
+            // Business rule - already finalized shipments cannot be re-finalized
             if (shipment.isFinalized()) {
                 request.setAttribute("errorMessage", "This shipment is already finalized.");
                 request.getRequestDispatcher("error.jsp").forward(request, response);
                 return;
             }
             
+            // Auto-generate tracking number if not provided
             if (trackingNumber == null || trackingNumber.isEmpty()) {
                 trackingNumber = "TRK" + System.currentTimeMillis();
             }
             
+            // Finalize shipment and redirect
             boolean success = shipmentDAO.finalizeShipment(shipmentId, trackingNumber);
             
             if (success) {
@@ -434,10 +495,14 @@ public class ShipmentServlet extends HttpServlet {
         }
     }
     
+    /**
+     * Handles shipment search functionality
+     */
     private void searchShipments(HttpServletRequest request, HttpServletResponse response, 
                                 ShipmentDAO shipmentDAO, User user) 
                                 throws ServletException, IOException, SQLException {
         
+        // Extract search parameters
         String shipmentIdStr = request.getParameter("shipmentId");
         String startDateStr = request.getParameter("startDate");
         String endDateStr = request.getParameter("endDate");
@@ -446,6 +511,7 @@ public class ShipmentServlet extends HttpServlet {
         Date startDate = null;
         Date endDate = null;
         
+        // Parse shipment ID if provided
         if (shipmentIdStr != null && !shipmentIdStr.isEmpty()) {
             try {
                 shipmentId = Integer.parseInt(shipmentIdStr);
@@ -456,6 +522,7 @@ public class ShipmentServlet extends HttpServlet {
             }
         }
         
+        // Parse dates with strict format validation
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         
         if (startDateStr != null && !startDateStr.isEmpty()) {
@@ -480,6 +547,7 @@ public class ShipmentServlet extends HttpServlet {
             }
         }
         
+        // Search and display results
         List<Shipment> shipments = shipmentDAO.searchShipments(user.getId(), startDate, endDate, shipmentId);
         
         request.setAttribute("shipments", shipments);

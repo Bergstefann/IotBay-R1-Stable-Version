@@ -206,9 +206,7 @@
                                             
                                             <% if (!shipment.isFinalized()) { %>
                                                 <a href="ShipmentServlet?action=showEdit&id=<%= shipment.getShipmentID() %>" class="btn btn-sm">Edit</a>
-                                                <a href="DeleteShipmentServlet?id=<%=shipment.getShipmentID()%>" class="btn btn-sm" style="color: #F96E46;">
-                                                    Delete
-                                                </a>
+                                                <a href="DeleteShipmentServlet?id=<%=shipment.getShipmentID()%>" class="btn btn-sm">Delete</a>
                                             <% } %>
                                         </div>
                                     </td>
