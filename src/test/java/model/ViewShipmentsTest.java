@@ -8,11 +8,6 @@ import java.util.List;
 
 /**
  * JUnit Test for View Shipments User Story
- * 
- * Acceptance Test Criteria:
- * The customer has existing shipments, when they access the shipment list page, all their
- * shipments should be displayed ordered by creation date DESC, showing shipment details
- * including status, tracking number, and address information.
  */
 public class ViewShipmentsTest {
 
@@ -65,7 +60,7 @@ public class ViewShipmentsTest {
 
     @Test
     public void testShipmentDetailsDisplay() {
-        // Test that each shipment has required display information
+        // Test that each shipment has alll parameters
         for (Shipment shipment : testShipments) {
             assertNotNull("Shipment ID should not be null", shipment.getShipmentID());
             assertNotNull("Order ID should not be null", shipment.getOrderID());
@@ -79,7 +74,7 @@ public class ViewShipmentsTest {
 
     @Test
     public void testShipmentStatusValues() {
-        // Test valid status values
+        // Test status values are valid
         assertEquals("First shipment should be Pending", "Pending", shipment1.getStatus());
         assertEquals("Second shipment should be Processing", "Processing", shipment2.getStatus());
         assertEquals("Third shipment should be Shipped", "Shipped", shipment3.getStatus());
@@ -87,7 +82,7 @@ public class ViewShipmentsTest {
 
     @Test
     public void testTrackingNumberVisibility() {
-        // Test tracking number is only shown for finalized shipments
+        // Test tracking number is only for finalized shipments
         assertNull("Pending shipment should not have tracking number", shipment1.getTrackingNumber());
         assertNotNull("Processing shipment should have tracking number", shipment2.getTrackingNumber());
         assertNotNull("Shipped shipment should have tracking number", shipment3.getTrackingNumber());
@@ -98,7 +93,7 @@ public class ViewShipmentsTest {
 
     @Test
     public void testAddressInformation() {
-        // Test address information is complete
+        // Test valid address information
         assertEquals("First shipment address", "123 Test St, Sydney, NSW 2000", shipment1.getFullAddress());
         assertEquals("Second shipment address", "456 Oak Ave, Melbourne, VIC 3000", shipment2.getFullAddress());
         assertEquals("Third shipment address", "789 Pine Rd, Brisbane, QLD 4000", shipment3.getFullAddress());
@@ -106,7 +101,7 @@ public class ViewShipmentsTest {
 
     @Test
     public void testShipmentShortDetails() {
-        // Test short details format for display
+        // Test abbreviated details format for shipment-list display
         String details1 = shipment1.getShortDetails();
         String details2 = shipment2.getShortDetails();
         String details3 = shipment3.getShortDetails();

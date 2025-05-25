@@ -6,10 +6,6 @@ import static org.junit.Assert.*;
 
 /**
  * JUnit Test for Delete Un-finalised Shipment User Story
- * 
- * Acceptance Test Criteria:
- * When finalised = false, when the customer selects the delete button, the shipment should be
- * permanently removed from the database and no longer appear in their shipment list.
  */
 public class DeleteShipmentTest {
 
@@ -18,13 +14,13 @@ public class DeleteShipmentTest {
 
     @Before
     public void setUp() {
-        // Create an unfinalized shipment (can be deleted)
+        // Create unfinalized shipment
         unfinalizedShipment = new Shipment(1, 1, "Standard", "123 Test St", "Sydney", "NSW", "2000");
         unfinalizedShipment.setShipmentID(1);
         unfinalizedShipment.setStatus("Pending");
         unfinalizedShipment.setFinalized(false);
 
-        // Create a finalized shipment (cannot be deleted)
+        // Create finalized shipment
         finalizedShipment = new Shipment(2, 1, "Express", "456 Oak Ave", "Melbourne", "VIC", "3000");
         finalizedShipment.setShipmentID(2);
         finalizedShipment.setStatus("Shipped");
@@ -37,25 +33,21 @@ public class DeleteShipmentTest {
         // Test that unfinalized shipment can be deleted
         assertFalse("Shipment should not be finalized", unfinalizedShipment.isFinalized());
         assertEquals("Status should be Pending", "Pending", unfinalizedShipment.getStatus());
-        
-        // Simulate deletion eligibility check
         boolean canDelete = !unfinalizedShipment.isFinalized();
         assertTrue("Unfinalized shipment should be eligible for deletion", canDelete);
     }
 
     @Test
     public void testFinalizedShipmentCannotBeDeleted() {
-        // Test that finalized shipment cannot be deleted  
+        // Test that finalized shipment can't be deleted
         assertTrue("Shipment should be finalized", finalizedShipment.isFinalized());
-        
-        // Simulate deletion eligibility check
         boolean canDelete = !finalizedShipment.isFinalized();
         assertFalse("Finalized shipment should not be eligible for deletion", canDelete);
     }
 
     @Test
     public void testDeleteValidation() {
-        // Test delete validation logic
+        // Test delete validation
         assertTrue("Should be able to delete unfinalized shipment", canDeleteShipment(unfinalizedShipment));
         assertFalse("Should not be able to delete finalized shipment", canDeleteShipment(finalizedShipment));
     }
@@ -69,14 +61,14 @@ public class DeleteShipmentTest {
 
     @Test
     public void testDeleteReturnsSuccess() {
-        // Test that delete operation returns success for valid deletion
+        // Test that delete action returns success
         boolean deleteResult = simulateDelete(unfinalizedShipment);
         assertTrue("Delete should return true for unfinalized shipment", deleteResult);
     }
 
     @Test
     public void testDeleteReturnsFalseForFinalized() {
-        // Test that delete operation returns false for finalized shipment
+        // Test that delete actions returns false for finalized shipment
         boolean deleteResult = simulateDelete(finalizedShipment);
         assertFalse("Delete should return false for finalized shipment", deleteResult);
     }
@@ -96,7 +88,7 @@ public class DeleteShipmentTest {
 
     @Test
     public void testShipmentWithPendingStatus() {
-        // Test that pending status shipments can be deleted
+        // Test that pending shipments can be deleted
         unfinalizedShipment.setStatus("Pending");
         assertTrue("Pending shipment should be deletable", canDeleteShipment(unfinalizedShipment));
     }
@@ -117,14 +109,12 @@ public class DeleteShipmentTest {
         assertTrue("Shipment with tracking but not finalized should be deletable", canDeleteShipment(unfinalizedShipment));
     }
 
-    // Helper methods to simulate business logic
     private boolean canDeleteShipment(Shipment shipment) {
         return !shipment.isFinalized();
     }
 
     private boolean simulateDelete(Shipment shipment) {
         if (canDeleteShipment(shipment)) {
-            // Simulate successful deletion
             return true;
         }
         return false;

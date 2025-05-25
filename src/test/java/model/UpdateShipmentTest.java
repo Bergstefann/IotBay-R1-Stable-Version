@@ -6,11 +6,6 @@ import static org.junit.Assert.*;
 
 /**
  * JUnit Test for Edit/Update Shipment User Story
- * 
- * Acceptance Test Criteria:
- * If a shipment is non-finalised, when the customer modifies the shipment details (address,
- * method, etc.) and saves changes, shipment record should be updated with new values and
- * updatedDate should be set to current timestamp.
  */
 public class UpdateShipmentTest {
 
@@ -23,7 +18,6 @@ public class UpdateShipmentTest {
 
     @Before
     public void setUp() {
-        // Create a non-finalized shipment for testing updates
         testShipment = new Shipment(1, 1, originalMethod, originalAddress, 
                 originalCity, originalState, originalPostcode);
         testShipment.setShipmentID(1);
@@ -33,7 +27,6 @@ public class UpdateShipmentTest {
 
     @Test
     public void testUpdateShipmentModifiesRecord() {
-        // Test updating shipment details
         String newAddress = "456 Updated Ave";
         String newCity = "Melbourne";
         String newState = "VIC";
@@ -46,7 +39,7 @@ public class UpdateShipmentTest {
         testShipment.setPostcode(newPostcode);
         testShipment.setShipmentMethod(newMethod);
 
-        // Verify updates
+        
         assertEquals("Address should be updated", newAddress, testShipment.getStreetAddress());
         assertEquals("City should be updated", newCity, testShipment.getCity());
         assertEquals("State should be updated", newState, testShipment.getState());
@@ -56,8 +49,6 @@ public class UpdateShipmentTest {
 
     @Test
     public void testUpdateShipmentReturnTrue() {
-        // Test that update operation should return true for success
-        // Simulating successful update by checking if values change
         String newCity = "Melbourne";
         testShipment.setCity(newCity);
         
@@ -67,28 +58,21 @@ public class UpdateShipmentTest {
 
     @Test
     public void testNonFinalizedShipmentCanBeUpdated() {
-        // Test that only non-finalized shipments can be updated
         assertFalse("Shipment should not be finalized", testShipment.isFinalized());
         
-        // Update should be allowed
         testShipment.setCity("Melbourne");
         assertEquals("City should be updated", "Melbourne", testShipment.getCity());
     }
 
     @Test
     public void testFinalizedShipmentShouldNotBeUpdated() {
-        // Test that finalized shipments should not be updated
         testShipment.setFinalized(true);
         assertTrue("Shipment should be finalized", testShipment.isFinalized());
-        
-        // In a real scenario, the servlet would prevent this update
-        // For testing purposes, we verify the finalized status
         assertTrue("Finalized shipment update should be blocked", testShipment.isFinalized());
     }
 
     @Test
     public void testUpdateAllAddressFields() {
-        // Test updating all address fields
         testShipment.setStreetAddress("789 New Street");
         testShipment.setCity("Brisbane");  
         testShipment.setState("QLD");
@@ -100,7 +84,6 @@ public class UpdateShipmentTest {
 
     @Test
     public void testUpdateShipmentMethod() {
-        // Test updating shipment method
         String[] methods = {"Standard", "Express", "Priority", "Overnight", "Economy"};
         
         for (String method : methods) {
@@ -111,7 +94,6 @@ public class UpdateShipmentTest {
 
     @Test
     public void testUpdateOrderId() {
-        // Test updating order ID
         int newOrderId = 99;
         testShipment.setOrderID(newOrderId);
         assertEquals("Order ID should be updated", newOrderId, testShipment.getOrderID());
@@ -119,10 +101,8 @@ public class UpdateShipmentTest {
 
     @Test
     public void testShipmentStatusRemainsSame() {
-        // Test that status remains unchanged during regular updates
         String originalStatus = testShipment.getStatus();
         
-        // Update other fields
         testShipment.setCity("Melbourne");
         testShipment.setShipmentMethod("Express");
         
@@ -131,7 +111,6 @@ public class UpdateShipmentTest {
 
     @Test
     public void testMultipleUpdates() {
-        // Test multiple sequential updates
         testShipment.setCity("Melbourne");
         assertEquals("First update should work", "Melbourne", testShipment.getCity());
         

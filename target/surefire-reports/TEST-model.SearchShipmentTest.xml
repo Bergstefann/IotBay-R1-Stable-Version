@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" name="model.SearchShipmentTest" time="0.006" tests="11" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" name="model.SearchShipmentTest" time="0" tests="11" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.specification.version" value="17"/>
     <property name="sun.cpu.isalist" value="amd64"/>
@@ -15,7 +15,7 @@
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="user.country" value="AU"/>
     <property name="sun.boot.library.path" value="C:\Program Files\Java\jdk-17\bin"/>
-    <property name="sun.java.command" value="C:\Users\thoma\AppData\Local\Temp\surefire11259394034746680883\surefirebooter17113828334406110138.jar C:\Users\thoma\AppData\Local\Temp\surefire11259394034746680883 2025-05-25T16-21-39_479-jvmRun1 surefire6475621751150684506tmp surefire_08206939958959536582tmp"/>
+    <property name="sun.java.command" value="C:\Users\thoma\AppData\Local\Temp\surefire2022463085878263892\surefirebooter5416729505047843017.jar C:\Users\thoma\AppData\Local\Temp\surefire2022463085878263892 2025-05-26T09-25-32_953-jvmRun1 surefire18041887582106393877tmp surefire_012096748174126794544tmp"/>
     <property name="jdk.debug" value="release"/>
     <property name="surefire.test.class.path" value="C:\Users\thoma\OneDrive\Documents\IotBay R1 Stable Version\target\test-classes;C:\Users\thoma\OneDrive\Documents\IotBay R1 Stable Version\target\classes;C:\Users\thoma\.m2\repository\junit\junit\4.11\junit-4.11.jar;C:\Users\thoma\.m2\repository\org\hamcrest\hamcrest-core\1.3\hamcrest-core-1.3.jar;C:\Users\thoma\.m2\repository\javax\servlet\javax.servlet-api\3.1.0\javax.servlet-api-3.1.0.jar;C:\Users\thoma\.m2\repository\org\xerial\sqlite-jdbc\3.42.0.0\sqlite-jdbc-3.42.0.0.jar;"/>
     <property name="sun.cpu.endian" value="little"/>
@@ -30,7 +30,7 @@
     <property name="line.separator" value="&#10;"/>
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
-    <property name="surefire.real.class.path" value="C:\Users\thoma\AppData\Local\Temp\surefire11259394034746680883\surefirebooter17113828334406110138.jar"/>
+    <property name="surefire.real.class.path" value="C:\Users\thoma\AppData\Local\Temp\surefire2022463085878263892\surefirebooter5416729505047843017.jar"/>
     <property name="user.script" value=""/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
     <property name="java.runtime.version" value="17.0.12+8-LTS-286"/>
@@ -58,13 +58,13 @@
   </properties>
   <testcase name="testSearchShipmentsBySpecificDateRange" classname="model.SearchShipmentTest" time="0"/>
   <testcase name="testSearchShipmentByIdNotFound" classname="model.SearchShipmentTest" time="0"/>
-  <testcase name="testSearchResultsNotNull" classname="model.SearchShipmentTest" time="0.002"/>
+  <testcase name="testSearchResultsNotNull" classname="model.SearchShipmentTest" time="0"/>
   <testcase name="testSearchEmptyResults" classname="model.SearchShipmentTest" time="0"/>
   <testcase name="testSearchWithStartDateOnly" classname="model.SearchShipmentTest" time="0"/>
   <testcase name="testSearchResultsFormat" classname="model.SearchShipmentTest" time="0"/>
   <testcase name="testSearchShipmentsByDateRange" classname="model.SearchShipmentTest" time="0"/>
   <testcase name="testSearchMultipleCriteria" classname="model.SearchShipmentTest" time="0"/>
   <testcase name="testSearchWithEndDateOnly" classname="model.SearchShipmentTest" time="0"/>
-  <testcase name="testSearchShipmentById" classname="model.SearchShipmentTest" time="0.002"/>
+  <testcase name="testSearchShipmentById" classname="model.SearchShipmentTest" time="0"/>
   <testcase name="testSearchBelongsToCustomer" classname="model.SearchShipmentTest" time="0"/>
 </testsuite>

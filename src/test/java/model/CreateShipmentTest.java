@@ -6,12 +6,6 @@ import static org.junit.Assert.*;
 
 /**
  * JUnit Test for Create Shipment User Story
- * 
- * Acceptance Test Criteria:
- * A logged-in customer, when they provide valid shipment details (orderID, shipmentMethod,
- * streetAddress, city, state, postcode) and submit the create form, a new shipment will be
- * created with status "Pending" (finalised set to false), and the customer is redirected to
- * updated shipment view.
  */
 public class CreateShipmentTest {
 
@@ -26,14 +20,14 @@ public class CreateShipmentTest {
 
     @Before
     public void setUp() {
-        // Initialize test shipment with valid data
+        // Initialize test shipment
         testShipment = new Shipment(testOrderID, testCustomerID, testShipmentMethod,
                 testStreetAddress, testCity, testState, testPostcode);
     }
 
     @Test
     public void testCreateShipmentWithValidData() {
-        // Test that shipment is created with provided data
+        // Test that shipment is created
         assertNotNull("Shipment should be created", testShipment);
         assertEquals("Order ID should match", testOrderID, testShipment.getOrderID());
         assertEquals("Customer ID should match", testCustomerID, testShipment.getCustomerID());
@@ -58,7 +52,7 @@ public class CreateShipmentTest {
 
     @Test
     public void testShipmentIDGreaterThanZero() {
-        // Test that shipment ID should be greater than 0 (if set)
+        // Test that shipment ID is greater than 0
         testShipment.setShipmentID(1);
         assertTrue("Shipment ID should be greater than 0", testShipment.getShipmentID() > 0);
     }

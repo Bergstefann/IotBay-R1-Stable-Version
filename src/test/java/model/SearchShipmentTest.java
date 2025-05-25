@@ -11,10 +11,6 @@ import java.text.ParseException;
 
 /**
  * JUnit Test for Search Shipment by ID or Date User Story
- * 
- * Acceptance Test Criteria:
- * Search criteria (shipment ID, date) should return all shipments that belong to the customer
- * filtered by the specified criteria.
  */
 public class SearchShipmentTest {
 
@@ -63,7 +59,7 @@ public class SearchShipmentTest {
 
     @Test
     public void testSearchShipmentsBySpecificDateRange() throws ParseException {
-        // Test searching with specific date range
+        // Test searching with specific creation date
         Date searchStartDate = new Date(dateFormat.parse("2023-06-01").getTime());
         Date searchEndDate = new Date(dateFormat.parse("2023-12-31").getTime());
         
@@ -80,7 +76,7 @@ public class SearchShipmentTest {
 
     @Test
     public void testSearchShipmentById() {
-        // Test searching by specific shipment ID
+        // Test searching by shipment ID
         Integer searchId = 2;
         List<Shipment> results = searchShipmentsByDateRange(1, null, null, searchId);
         
@@ -99,7 +95,7 @@ public class SearchShipmentTest {
 
     @Test
     public void testSearchBelongsToCustomer() {
-        // Test that search results belong to the correct customer
+        // Test that search results belong to the user
         List<Shipment> results = searchShipmentsByDateRange(1, startDate, endDate, null);
         
         for (Shipment shipment : results) {
@@ -109,7 +105,7 @@ public class SearchShipmentTest {
 
     @Test
     public void testSearchWithStartDateOnly() throws ParseException {
-        // Test searching with only start date
+        // Test searching with creation date only
         Date searchStartDate = new Date(dateFormat.parse("2023-06-01").getTime());
         List<Shipment> results = searchShipmentsByDateRange(1, searchStartDate, null, null);
         
@@ -121,7 +117,7 @@ public class SearchShipmentTest {
 
     @Test
     public void testSearchWithEndDateOnly() throws ParseException {
-        // Test searching with only end date
+        // Test searching with end date only
         Date searchEndDate = new Date(dateFormat.parse("2023-06-30").getTime());
         List<Shipment> results = searchShipmentsByDateRange(1, null, searchEndDate, null);
         
@@ -143,7 +139,7 @@ public class SearchShipmentTest {
 
     @Test
     public void testSearchEmptyResults() {
-        // Test search with no matching criteria
+        // Test search with no criteria
         List<Shipment> results = searchShipmentsByDateRange(999, null, null, null); // Non-existent customer
         
         assertNotNull("Results should not be null", results);
@@ -152,7 +148,7 @@ public class SearchShipmentTest {
 
     @Test
     public void testSearchMultipleCriteria() throws ParseException {
-        // Test search with both date range and ID (ID should take precedence)
+        // Test search with both date range and ID (ID takes precedence)
         Date searchStartDate = new Date(dateFormat.parse("2023-01-01").getTime());
         Date searchEndDate = new Date(dateFormat.parse("2023-12-31").getTime());
         Integer searchId = 2;
@@ -180,7 +176,6 @@ public class SearchShipmentTest {
         }
     }
 
-    // Helper method to simulate search functionality
     private List<Shipment> searchShipmentsByDateRange(Integer customerId, Date startDate, Date endDate, Integer shipmentId) {
         List<Shipment> results = new ArrayList<>();
         
@@ -192,7 +187,7 @@ public class SearchShipmentTest {
                 include = false;
             }
             
-            // If searching by specific ID, only include that one
+            // If searching by ID, only 1 ID should appear
             if (include && shipmentId != null && shipment.getShipmentID() != shipmentId.intValue()) {
                 include = false;
             }
