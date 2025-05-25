@@ -1,1 +1,5 @@
-model\ProductTest.class
+model\CreateShipmentTest.class
+model\ViewShipmentsTest.class
+model\DeleteShipmentTest.class
+model\UpdateShipmentTest.class
+model\SearchShipmentTest.class
